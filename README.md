@@ -1,4 +1,4 @@
-# integrated-lts-cbm
+# Integrated Forest Monitoring using LTS and CBM
 
 Data and R code accompanying the paper:
 
