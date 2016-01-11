@@ -10,6 +10,29 @@ This paper presents an approach to integrate community-based monitoring (CBM) da
 
 This repository holds the local data and the R code used to carry out this study. Because of size restrictions, the LTS data are not included here (except for a time series for an example location). Landsat image data can be downloaded for free via the USGS.
 
+## Community-Based Monitoring data
+
+In this study, we worked with local forest rangers to demonstrate the potential of CBM data when integrated with LTS. A series of observations made by the rangers over a period of three years is included here. These observations were labelled as either deforestation ("DEF") or degradation ("DEG") events. We also included a set of no-change ("NOCH") observations based on visual interpretation of a random sample using high-resolution imagery to complete the training dataset.
+
+```R
+library(rgdal)
+library(raster)
+obs <- readOGR('data', 'local_observations')
+
+plot(obs, col = 'white')
+plot(subset(obs, label == "NOCH"), col = '#4daf4a', pch = '*', add = TRUE)
+plot(subset(obs, label == "DEG"), col = '#377eb8', pch = '+', add = TRUE)
+plot(subset(obs, label == "DEF"), col = '#e41a1c', pch = 'X', cex = 0.7, add = TRUE)
+scalebar(25000, label = '25km')
+legend('topright', legend = c('DEF', 'DEG', 'NOCH'), pch = c('X', '+', '*'), 
+       pt.cex = c(0.7, 1, 1), col = c('#e41a1c', '#377eb8', '#4daf4a'), bty = 'n')
+```
+
+<div style="text-align:center">
+<img src ="figs/local_observations.png" />
+</div>
+
+
 ## Spectral bands and indices
 
 In this paper we used a range of indices in addition to the original six Landsat bands (excluding the thermal band). The original six bands are included here for an example observation (where deforestation ("DEF") was observed).
