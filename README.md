@@ -96,7 +96,7 @@ Here, we use the TCW time series as an example, but this was performed for all s
 ```R
 library(strucchange)
 source('R/coefSegments.R')
-segs <- coefSegments(LTS$TCW, dates = as.Date(LTS$date), breaks = 1, plot = TRUE, dataLabel = 'TCW')
+segs <- coefSegments(LTS$TCW, dates = as.Date(LTS$date), model = 'rlm', breaks = 1, plot = TRUE, dataLabel = 'TCW')
 print(segs)
 ```
 
