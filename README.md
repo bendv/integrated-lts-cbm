@@ -1,3 +1,6 @@
+---
+output: word_document
+---
 # Integrated Forest Monitoring using LTS and CBM
 
 Data and R code accompanying the paper:
@@ -249,7 +252,7 @@ plot(delAmp, zlim = c(-700, 700), col = cols)
 plot(subset(obs, label == "NOCH"), pch = 'o', add = TRUE, cex = 0.8)
 plot(subset(obs, label == "DEG"), pch = '+', add = TRUE, cex = 0.8)
 plot(subset(obs, label == "DEF"), pch = 'x', add = TRUE, cex = 0.8)
-legend('topright', legend = c('DEF', 'DEG', 'NOCH'), pch = c('o', '+', 'x'), cex = 0.8)
+legend('topright', legend = c('DEF', 'DEG', 'NOCH'), pch = c('x', '+', 'o'), cex = 0.8)
 ```
 
 <div style="text-align:center">
