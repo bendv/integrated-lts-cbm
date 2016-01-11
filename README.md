@@ -182,7 +182,8 @@ res <- foreach(k = 1:N) %dopar% {
   deferr <- sapply(rf, FUN=function(x) x$confus[1, 4])
   degerr <- sapply(rf, FUN=function(x) x$confus[2, 4])
   nocherr <- sapply(rf, FUN=function(x) x$confus[3, 4])
-  allerr <- sapply(rf, FUN=function(x) 1 - sum(x$confus[1, 1], x$confus[2, 2], x$confus[3, 3])/sum(x$confus[c(1:3), c(1:3)]))
+  allerr <- sapply(rf, FUN=function(x) 
+    1 - sum(x$confus[1, 1], x$confus[2, 2], x$confus[3, 3]) / sum(x$confus[c(1:3), c(1:3)]))
   
   # rank by decreasing accuracy (increasing error)
   x_def <- sapply(band_names, FUN=function(x) which(x == band_names[order(deferr)]))
@@ -205,10 +206,26 @@ res <- foreach(k = 1:N) %dopar% {
 
 # reduce list of data.frames by summing ranks and divide by N
 S <- Reduce('+', res) / N
-row.names(S)[11:13] <- c('TCB', 'TCG', 'TCW')
 ```
 
+The results of the above code chunk are available in this repository.
+
+```R
+S <- read.csv('data/rf_band_scores.csv', row.names = 1)
+
+bp <- barplot(S$S_all[rev(order(S$S_all))], ylim = c(0, 1))
+text(x = bp + 0.25, y = -0.05, label = row.names(S)[rev(order(S$S_all))], xpd = TRUE, srt = 90, pos = 2)
+```
+
+<div style="text-align:center">
+<img src ="figs/importance.png" />
+</div>
+
 ## Mapping forest change variables
+
+TODO...
+
+## References
 
 TODO...
 
