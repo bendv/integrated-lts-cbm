@@ -214,7 +214,7 @@ The results of the above code chunk are available in this repository.
 S <- read.csv('data/rf_band_scores.csv', row.names = 1)
 
 bp <- barplot(S$S_all[rev(order(S$S_all))], ylim = c(0, 1))
-text(x = bp + 0.25, y = -0.05, label = row.names(S)[rev(order(S$S_all))], xpd = TRUE, srt = 90, pos = 2)
+text(x = bp + 0.5, y = -0.05, label = row.names(S)[rev(order(S$S_all))], xpd = TRUE, srt = 90, pos = 2)
 ```
 
 <div style="text-align:center">
@@ -223,7 +223,40 @@ text(x = bp + 0.25, y = -0.05, label = row.names(S)[rev(order(S$S_all))], xpd = 
 
 ## Mapping forest change variables
 
-TODO...
+We used the most important spectral-temporal variables to produce spatial predictions of deforestation, degradation or no-change for several sites across our study area. The covariate raster layers for one of these sites in the Tura sub-district are available at the following link: https://www.dropbox.com/s/byqxawgeoh4in79/tura_site_covariates.zip?dl=0
+
+In a unix shell:
+
+```bash
+wget -P data/ https://www.dropbox.com/s/byqxawgeoh4in79/tura_site_covariates.zip?dl=0
+unzip data/tura_site_covariates.zip -d data/
+```
+
+Now open the layers in R. You will see that only the RLM covariates of the green band, and all covaraites of the SWIR2 and TCW bands have been included to reduce computation time (ideally, we would like to have layers representing all covariates studied above).
+
+```R
+library(raster)
+tura_covs <- brick('data/tura_site_covariates/tura_site_covariates.grd')
+names(tura_covs)
+```
+
+As an example, look at the change in amplitude between SWIR2 segments. This change could be a clue as to where and what types of changes may have occured over the time period we are studying.
+
+```R
+cols <- colorRampPalette(c('#377eb8', '#ffffff', '#e41a1c'))(255)
+delAmp <- tura_covs$SWIR2_amp2 - tura_covs$SWIR2_amp1
+plot(delAmp, zlim = c(-700, 700), col = cols)
+plot(subset(obs, label == "NOCH"), pch = 'o', add = TRUE, cex = 0.8)
+plot(subset(obs, label == "DEG"), pch = '+', add = TRUE, cex = 0.8)
+plot(subset(obs, label == "DEF"), pch = 'x', add = TRUE, cex = 0.8)
+legend('topright', legend = c('DEF', 'DEG', 'NOCH'), pch = c('o', '+', 'x'), cex = 0.8)
+```
+
+<div style="text-align:center">
+<img src ="figs/tura_swir2_delamp.png" />
+</div>
+
+(to be continued...)
 
 ## References
 
