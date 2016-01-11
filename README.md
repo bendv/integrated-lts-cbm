@@ -47,8 +47,12 @@ Each column represents a spectral band, and can be neatly visualized using the `
 ```R
 library(zoo)
 swir1 <- zoo(LTS$SWIR1, as.Date(LTS$date))
-plot(swir1, type = 'b', pch = '*', cex = 0.65)
+plot(swir1, type = 'b', pch = '*', cex = 0.65, xlab = 'Time')
 ```
+
+<div style="text-align:center">
+<img src ="figs/swir1.png" />
+</div>
 
 We computed a range of indices based on these spectral bands:
 
