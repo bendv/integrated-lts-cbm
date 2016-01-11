@@ -137,3 +137,78 @@ All the covaraties computed for all local observations are included here.
 covs <- read.csv('data/covariates.csv')
 head(covs)
 ```
+
+Note: the ```*_breakDate``` columns represent the time of a break from the *end* of the time series.
+
+## Random Forest models
+
+We used the ```randomForest``` package in R to derive random forest models using the training data shown above. Given the randomness of the method, exact results may differ between runs (hint: use ```set.seed()``` for reproduceable results).
+
+```R
+library(randomForest)
+rf <- randomForest(covs[, -c(1:3)], covs$label, ntree = 7000, importance = TRUE)
+rf$confus
+```
+
+The out-of-box (OOB) error rate is shown by printing the confusion matrix above.
+
+## Estimating variable importance
+
+When we set ```importance = TRUE``` above, several importance measures are recorded for each covariate based on the individual classification trees. However, given the random nature of the model, and the high correlation bewteen covariates, this is not an altogether trustworthy measure of variable importance. 
+
+For this study, we derived a different measure of importance, focussing on the spectral bands themselves rather than the specific spectral-temporal covariate. In short, we derived random forest models for covariate grouped by spectral band, and ranked the models by their overall accuracy, as well as their accuracy per class. We repeated this process many times, and derived a score based on the "average" rank of each band. 
+
+Note that this process can take quite a long time to run. The ```doMC``` package can help by running the iteration in parallel. Here, we run the iteration on 6 cores, but this can be adjusted according to your system. The results of the following code chunk are also included in this repository.
+
+```R
+library(doMC)
+registerDoMC(cores = 6)
+
+N <- 1000
+band_names <- unique(substr(names(covs), 1, regexpr('_', names(covs)) - 1))[-c(1:2)]
+
+res <- foreach(k = 1:N) %dopar% {
+  
+  rf <- vector('list', length(band_names))
+  
+  # run random forest for each band
+  for(i in 1:length(band_names)) {
+    patt <- paste('^', band_names[i], '_', sep = '')
+    rfCovs <- covs[, grepl(patt, names(covs))]
+    rf[[i]] <- randomForest(rfCovs, covs$label, ntree = 7000)
+  }
+  
+  # get error rates for each band
+  deferr <- sapply(rf, FUN=function(x) x$confus[1, 4])
+  degerr <- sapply(rf, FUN=function(x) x$confus[2, 4])
+  nocherr <- sapply(rf, FUN=function(x) x$confus[3, 4])
+  allerr <- sapply(rf, FUN=function(x) 1 - sum(x$confus[1, 1], x$confus[2, 2], x$confus[3, 3])/sum(x$confus[c(1:3), c(1:3)]))
+  
+  # rank by decreasing accuracy (increasing error)
+  x_def <- sapply(band_names, FUN=function(x) which(x == band_names[order(deferr)]))
+  x_deg <- sapply(band_names, FUN=function(x) which(x == band_names[order(degerr)]))
+  x_noch <- sapply(band_names, FUN=function(x) which(x == band_names[order(nocherr)]))
+  x_all <- sapply(band_names, FUN=function(x) which(x == band_names[order(allerr)]))
+  
+  # scores
+  S_def <- (length(band_names) - x_def) / (length(band_names) - 1)
+  S_deg <- (length(band_names) - x_deg) / (length(band_names) - 1)
+  S_noch <- (length(band_names) - x_noch) / (length(band_names) - 1)
+  S_all <- (length(band_names) - x_all) / (length(band_names) - 1)
+  
+  res <- as.data.frame(cbind(S_def, S_deg, S_noch, S_all))
+  names(res) <- c('S_def', 'S_deg', 'S_noch', 'S_all')
+  row.names(res) <- band_names
+  
+  res
+}
+
+# reduce list of data.frames by summing ranks and divide by N
+S <- Reduce('+', res) / N
+row.names(S)[11:13] <- c('TCB', 'TCG', 'TCW')
+```
+
+## Mapping forest change variables
+
+TODO...
+
