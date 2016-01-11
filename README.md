@@ -131,3 +131,9 @@ print(segs)
 <img src ="figs/segs.png" />
 </div>
 
+All the covaraties computed for all local observations are included here.
+
+```R
+covs <- read.csv('data/covariates.csv')
+head(covs)
+```
