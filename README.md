@@ -6,6 +6,17 @@ Data and R code accompanying the paper:
 
 DeVries, B., Pratihast, A.K., Verbesselt, J., Kooistra, L. and Herold, M. 2016. Characterizing forest change using community-based monitoring data and Landsat time series. *PLOS ONE*, in press.
 
+## Installation
+
+You can use the data and code here either by cloning the repository in git:
+
+```bash
+git clone https://github.com/bendv/integrated-lts-cbm
+cd integrated-lts-cbm
+```
+
+Or you can download the repository as a .zip file [here](http://dx.doi.org/10.5281/zenodo.44611).
+
 ## Introduction
 
 This paper presents an approach to integrate community-based monitoring (CBM) data with dense Landsat times series (LTS) to characterize subtle forest changes. Here, we focus on deforestation and degradation processes, but this approach can be used to measure and monitor a broader range of forest change variables.
