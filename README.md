@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.44611.svg)](http://dx.doi.org/10.5281/zenodo.44611)
+
 # Integrated Forest Monitoring using LTS and CBM
 
 Data and R code accompanying the paper:
