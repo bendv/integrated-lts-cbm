@@ -223,20 +223,20 @@ text(x = bp + 0.5, y = -0.05, label = row.names(S)[rev(order(S$S_all))], xpd = T
 
 ## Mapping forest change variables
 
-We used the most important spectral-temporal variables to produce spatial predictions of deforestation, degradation or no-change for several sites across our study area. The covariate raster layers for one of these sites in the Tura sub-district are available at the following link: https://www.dropbox.com/s/byqxawgeoh4in79/tura_site_covariates.zip?dl=0
+We used the most important spectral-temporal variables to produce spatial predictions of deforestation, degradation or no-change for several sites across our study area. The covariate raster layers for one of these sites in the Tura sub-district are available at the following link: https://www.dropbox.com/s/6i9vbhnnrge8apw/tura_covariates.zip?dl=0
 
 In a unix shell:
 
 ```bash
-wget -P data/ https://www.dropbox.com/s/byqxawgeoh4in79/tura_site_covariates.zip?dl=0
-unzip data/tura_site_covariates.zip -d data/
+wget -P data/ https://www.dropbox.com/s/6i9vbhnnrge8apw/tura_covariates.zip?dl=0
+unzip data/tura_covariates.zip -d data/
 ```
 
 Now open the layers in R. You will see that only the RLM covariates of the green band, and all covaraites of the SWIR2 and TCW bands have been included to reduce computation time (ideally, we would like to have layers representing all covariates studied above).
 
 ```R
 library(raster)
-tura_covs <- brick('data/tura_site_covariates/tura_site_covariates.grd')
+tura_covs <- brick('data/tura_covariates.grd')
 names(tura_covs)
 ```
 
@@ -245,7 +245,7 @@ As an example, look at the change in amplitude between SWIR2 segments. This chan
 ```R
 cols <- colorRampPalette(c('#377eb8', '#ffffff', '#e41a1c'))(255)
 delAmp <- tura_covs$SWIR2_amp2 - tura_covs$SWIR2_amp1
-plot(delAmp, zlim = c(-700, 700), col = cols)
+plot(delAmp, zlim= c(-0.07, 0.07), col = cols)
 plot(subset(obs, label == "NOCH"), pch = 'o', add = TRUE, cex = 0.8)
 plot(subset(obs, label == "DEG"), pch = '+', add = TRUE, cex = 0.8)
 plot(subset(obs, label == "DEF"), pch = 'x', add = TRUE, cex = 0.8)
@@ -256,7 +256,64 @@ legend('topright', legend = c('DEF', 'DEG', 'NOCH'), pch = c('x', '+', 'o'), cex
 <img src ="figs/tura_swir2_delamp.png" />
 </div>
 
-(to be continued...)
+Since we are now only using a subset of these spectral-temporal variables, we need to adjust the covariate ```data.frame``` and make another random forest model. Also, it's very important that the covariates are named exactly as in the raster layers (e.g. "TCW" and "tcWet" are used interchangeably).
+
+```R
+new_covs <- covs[, grepl("G_rlm|tcWet|SWIR2", names(covs))]
+new_covs <- new_covs[, !grepl("del", names(new_covs))]
+```
+
+This study did not focus on the precise *timing* of changes, and as such, we changed the break date covariate into a binary (break/no-break) covariate.
+
+```R
+new_covs$SWIR2_breakDate <- factor(new_covs$SWIR2_breakDate == 9999, levels = c(FALSE, TRUE), labels = c(1, 0))
+new_covs$tcWet_breakDate <- factor(new_covs$tcWet_breakDate == 9999, levels = c(FALSE, TRUE), labels = c(1, 0))
+names(new_covs) <- gsub("breakDate", "break", names(new_covs))
+```
+
+Now the revised random forest model can be made. Recall that the training labels were left behind in the "covs" ```data.frame```.
+
+```R
+rf <- randomForest(new_covs, covs$label, ntrees = 5000)
+rf$confus
+```
+
+Now we can run ```predict``` from the raster package. For this, we first define a helper function to carry out the spatial predictions.
+
+```R
+predfun <- function(model, data) {
+  v <- predict(model, data, type = 'prob')
+  as.vector(v)
+}
+
+predicted <- predict(tura_covs, rf, fun = predfun, index = 1:3)
+names(predicted) <- c("DEF", "DEG", "NOCH")
+```
+
+These layers represent esimated class probabilities for "DEF", "DEG" and "NOCH". Some of these pixels represent areas that were non-forest before our period of interest (e.g. wetland areas in the north of this site). Since we don't have any training data related to forest gain or other non-forest processes, we need to exclude these pixels using a forest mask from the year 2001 (from the closest cloud-free image to 2000).
+
+In this paper, we mapped DEF and DEG by displaying their probabilities only when those exceeded 50%.
+
+```R
+fm <- raster('data/forest_mask_2000.tif')
+predicted[is.na(fm)] <- NA
+def <- predicted[[1]]
+def[def < 0.5] <- NA
+deg <- predicted[[2]]
+deg[deg < 0.5] <- NA
+
+reds <- colorRampPalette(c("#ffffff", "#e41a1c"))(255)
+blues <- colorRampPalette(c("#ffffff", "#377eb8"))(255)
+
+plot(fm, col = '#4d9221', legend = FALSE)
+plot(def, col = reds, zlim = c(0.5, 1), add = TRUE, legend = FALSE)
+plot(deg, col = blues, zlim = c(0.5, 1), add = TRUE, legend = FALSE)
+
+```
+
+<div style="text-align:center">
+<img src ="figs/tura_class_prob.png" />
+</div>
 
 ## References
 
