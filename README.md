@@ -127,9 +127,9 @@ lines(zoo(bpp$pred_rlm, bpp$time), col = 'red', lty = 2)
 
 ### (2) Segment-based descriptors
 
-The full time series descriptor may be a good measure of gradual changes over time, but as we can see in the plot above, it does not fully represent abrupt changes. For this reason, we used the BFAST method to derive temporal segments, and fit RLM models to each of these segements individuals. For simplicity (ie. to keep the total number of covariates manageble), we limited the segments to a maximum of one segment.
+The full time series descriptor may be a good measure of gradual changes over time, but as we can see in the plot above, it does not fully represent abrupt changes. For this reason, we used the BFAST method to derive temporal segments, and fit RLM models to each of these segements individually. For simplicity (ie. to keep the total number of covariates manageble), we limited the segments to a maximum of two segments arising from a maximum of one single breakpoint.
 
-The function ```coefSegments()``` included in this repository can derive and plot these segments for a time sereis. This function is based on the ```breakpoints()``` function in the ```strucchange``` package. To limit to a binary output (ie. maximum 1 breakpoint), set ```breaks = 1```.
+The function ```coefSegments()``` included in this repository can derive and plot these segments for a time series. This function is based on the ```breakpoints()``` function in the ```strucchange``` package. To limit to a binary output (ie. maximum 1 breakpoint), set ```breaks = 1```.
 
 Here, we use the TCW time series as an example, but this was performed for all spectral bands.
 
