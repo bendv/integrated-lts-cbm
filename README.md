@@ -236,12 +236,12 @@ text(x = bp + 0.5, y = -0.05, label = row.names(S)[rev(order(S$S_all))], xpd = T
 
 ## Mapping forest change variables
 
-We used the most important spectral-temporal variables to produce spatial predictions of deforestation, degradation or no-change for several sites across our study area. The covariate raster layers for one of these sites in the Tura sub-district are available at the following link: https://www.dropbox.com/s/6i9vbhnnrge8apw/tura_covariates.zip?dl=0
+We used the most important spectral-temporal variables to produce spatial predictions of deforestation, degradation or no-change for several sites across our study area. The covariate raster layers for one of these sites in the Tura sub-district are available at the following link: https://www.dropbox.com/s/6i9vbhnnrge8apw/tura_covariates.zip
 
 In a unix shell:
 
 ```bash
-wget -P data/ https://www.dropbox.com/s/6i9vbhnnrge8apw/tura_covariates.zip?dl=0
+wget -P data/ https://www.dropbox.com/s/6i9vbhnnrge8apw/tura_covariates.zip
 unzip data/tura_covariates.zip -d data/
 ```
 
