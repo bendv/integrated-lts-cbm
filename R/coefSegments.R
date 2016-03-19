@@ -66,13 +66,13 @@ coefSegments <- function(x, dates, type = 'irregular', bp = NULL, model = c('lm'
       bd <- bp
     }
     
-    seg <- paste('segment', c(1:(length(bp) + 1)), sep = '')
+    seg <- sprintf('segment%s', c(1:(length(bp) + 1)))
     bpp$segment <- seg[1]
     for(i in 2:length(seg)) {
       bpp$segment[bpp$time > bp[i-1]] <- seg[i]
     }
     
-  } else if(bp[1] == 0) {
+  } else {
     
     bpp$segment <- 'segment1'
     bp <- NULL
