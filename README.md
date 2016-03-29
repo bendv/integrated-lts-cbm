@@ -4,7 +4,7 @@
 
 Data and R code accompanying the paper:
 
-DeVries, B., Pratihast, A.K., Verbesselt, J., Kooistra, L. and Herold, M. 2016. Characterizing forest change using community-based monitoring data and Landsat time series. *PLOS ONE*, in press.
+<a href="http://doi.org/10.1371/journal.pone.0147121" target="_blank">DeVries, B., Pratihast, A.K., Verbesselt, J., Kooistra, L. & Herold, M. 2016. Characterizing forest change using community-based monitoring data and Landsat time series. PLoS ONE, 11(3), e0147121.</a>
 
 ## Installation
 
@@ -330,5 +330,8 @@ plot(deg, col = blues, zlim = c(0.5, 1), add = TRUE, legend = FALSE)
 
 ## References
 
-TODO...
+<p><a href="http://doi.org/10.1371/journal.pone.0147121" target="_blank">DeVries, B., Pratihast, A.K., Verbesselt, J., Kooistra, L. & Herold, M. 2016. Characterizing forest change using community-based monitoring data and Landsat time series. PLoS ONE, 11(3), e0147121.</a><p>
+<p><a href="http://doi.org/10.3390/f5102464" target="_blank">Pratihast, A.K., DeVries, B., Avitabile, V., de Bruin, S., Kooistra, L. and Herold, M. 2014. Combining satellite data and community-based observations for forest monitoring. Forests, 5:2464-2489.</a></p>
+<p><a href="http://doi.org/10.1016/j.rse.2010.08.003" target="_blank">Verbesselt, J., Hyndman, R., Zeileis, A., & Culvenor, D. 2010. Phenological change detection while accounting for abrupt and gradual trends in satellite image time series. Remote Sensing of Environment, 114(12), 2970-2980.</a></p>
+
 
