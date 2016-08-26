@@ -140,7 +140,7 @@ coefSegments <- function(x, dates, type = 'irregular', bp = NULL, model = c('lm'
   
   
   #### Lengths
-  if(length(unique(bpp$segment) > 1)) {
+  if(length(unique(bpp$segment)) > 1) {
     len <- c(max(bpp$time[bpp$segment == 'segment1']) - min(bpp$time),
              max(bpp$time) - min(bpp$time[bpp$segment == 'segment2']))
   } else {
